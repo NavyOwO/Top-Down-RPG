@@ -32,7 +32,7 @@ public class ItemDragHandler : MonoBehaviour, IBeginDragHandler, IDragHandler, I
         if (dropSlot == null)
         {
             GameObject item = eventData.pointerEnter;
-            if(item != null)
+            if (item != null)
             {
                 dropSlot = item.GetComponentInParent<Slot>();
             }
@@ -44,12 +44,15 @@ public class ItemDragHandler : MonoBehaviour, IBeginDragHandler, IDragHandler, I
         {
             if (dropSlot.currentItem != null)
             {
-                dropSlot.currentItem.transform.SetParent(originalSlot.transform);
-                originalSlot.currentItem = dropSlot.currentItem;
-                dropSlot.currentItem.GetComponent<RectTransform>().anchoredPosition = Vector2.zero;
+                // cache the item being swapped back before modifying any slot state
+                GameObject swappedItem = dropSlot.currentItem;
+                swappedItem.transform.SetParent(originalSlot.transform);
+                swappedItem.GetComponent<RectTransform>().anchoredPosition = Vector2.zero;
+                originalSlot.currentItem = swappedItem;
             }
             else
             {
+                // clear the original slot when dropping into an empty slot
                 originalSlot.currentItem = null;
             }
 
@@ -62,6 +65,6 @@ public class ItemDragHandler : MonoBehaviour, IBeginDragHandler, IDragHandler, I
         }
 
         GetComponent<RectTransform>().anchoredPosition = Vector2.zero;
-    }    
+    }
 
 }
