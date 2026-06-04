@@ -14,11 +14,23 @@ PrefabInstance:
       objectReference: {fileID: 1962190061, guid: 07ac8afd29524ea489bbd2a893fc3edc, type: 3}
     - target: {fileID: 5151321459926673034, guid: ce408854ac4971c42861d4c52f27f2be, type: 3}
       propertyPath: ID
-      value: 1
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 5151321459926673034, guid: ce408854ac4971c42861d4c52f27f2be, type: 3}
       propertyPath: Name
       value: Heart
+      objectReference: {fileID: 0}
+    - target: {fileID: 6676897524368797619, guid: ce408854ac4971c42861d4c52f27f2be, type: 3}
+      propertyPath: bounceCount
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 6676897524368797619, guid: ce408854ac4971c42861d4c52f27f2be, type: 3}
+      propertyPath: bounceHeight
+      value: 0.22
+      objectReference: {fileID: 0}
+    - target: {fileID: 6676897524368797619, guid: ce408854ac4971c42861d4c52f27f2be, type: 3}
+      propertyPath: bounceDuration
+      value: 0.16
       objectReference: {fileID: 0}
     - target: {fileID: 7003494205748829829, guid: ce408854ac4971c42861d4c52f27f2be, type: 3}
       propertyPath: m_Name

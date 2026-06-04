@@ -16,6 +16,7 @@ GameObject:
   - component: {fileID: 5151321459926673034}
   - component: {fileID: -1014760795259465009}
   - component: {fileID: 3277706028731121290}
+  - component: {fileID: 6676897524368797619}
   m_Layer: 5
   m_Name: Item
   m_TagString: Item
@@ -104,6 +105,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 896b78e41e3a6004c8d181461391affd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: '::'
+  minDropDistance: 2
+  maxDropDistance: 3
 --- !u!114 &5151321459926673034
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -116,7 +119,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1b6f7fe1a7de8714f9443d6cb328a7de, type: 3}
   m_Name: 
   m_EditorClassIdentifier: '::'
-  ID: 0
+  ID: 1
   Name: Green
 --- !u!212 &-1014760795259465009
 SpriteRenderer:
@@ -213,3 +216,18 @@ CircleCollider2D:
   m_CompositeOrder: 0
   m_Offset: {x: 0, y: 0}
   m_Radius: 0.5
+--- !u!114 &6676897524368797619
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7003494205748829829}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 97c9ce1f068aaf441ae85302dc8c69b5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::BounceEffect
+  bounceHeight: 0.3
+  bounceDuration: 0.4
+  bounceCount: 2
