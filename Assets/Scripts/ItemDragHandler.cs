@@ -1,6 +1,7 @@
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.EventSystems;
+using System.Collections;
 
 public class ItemDragHandler : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHandler
 {
@@ -9,6 +10,8 @@ public class ItemDragHandler : MonoBehaviour, IBeginDragHandler, IDragHandler, I
 
     [SerializeField] public float minDropDistance = 2f;
     [SerializeField] public float maxDropDistance = 3f;
+    [SerializeField] public float menuDelay = 0.5f; 
+    [SerializeField] public float menuHiddenTime = 1f; 
     void Start()
     {
         canvasGroup = GetComponent<CanvasGroup>();
@@ -94,12 +97,30 @@ public class ItemDragHandler : MonoBehaviour, IBeginDragHandler, IDragHandler, I
             return;
         }
 
+        HideForDuration(menuDelay, menuHiddenTime); //fix this
+
         Vector2 dropOffset = Random.insideUnitCircle.normalized * Random.Range(minDropDistance, maxDropDistance);
         Vector2 dropPosition = (Vector2)playerTransform.position + dropOffset;
 
         GameObject dropItem = Instantiate(gameObject, dropPosition, Quaternion.identity);
-        dropItem.GetComponent<BounceEffect>().StartBounce();
+        dropItem.GetComponent<BounceEffect>().StartBounce();     
 
         Destroy(gameObject);
+    }
+
+    private IEnumerator HideForDuration(float delayBefore, float hideDuration)
+    {
+        GameObject ui = GameObject.Find("UI");
+        CanvasGroup canvasGroup = ui.GetComponent<CanvasGroup>();
+
+        yield return new WaitForSeconds(delayBefore);
+        canvasGroup.alpha = 1f;
+
+        yield return new WaitForSeconds(hideDuration);
+        canvasGroup.alpha = 0.2f;
+    }
+    private void HideItemForDuration(float delayBefore, float hideDuration)
+    {
+        StartCoroutine(HideForDuration(delayBefore, hideDuration));
     }
 }

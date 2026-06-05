@@ -7343,6 +7343,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 6657600267702768268, guid: f355da238120c0441b58e61477868750, type: 3}
+      propertyPath: ui
+      value: 
+      objectReference: {fileID: 699451770}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -7951,6 +7955,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 6657600267702768268, guid: f355da238120c0441b58e61477868750, type: 3}
+      propertyPath: ui
+      value: 
+      objectReference: {fileID: 699451770}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -9760,13 +9768,13 @@ MonoBehaviour:
   m_Padding:
     m_Left: 100
     m_Right: 50
-    m_Top: 200
-    m_Bottom: 100
+    m_Top: 100
+    m_Bottom: 50
   m_ChildAlignment: 0
   m_StartCorner: 0
   m_StartAxis: 0
-  m_CellSize: {x: 100, y: 75}
-  m_Spacing: {x: 100, y: 100}
+  m_CellSize: {x: 120, y: 120}
+  m_Spacing: {x: 80, y: 80}
   m_Constraint: 0
   m_ConstraintCount: 2
 --- !u!1 &855573742
@@ -11197,6 +11205,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 3707583934934289076, guid: ce408854ac4971c42861d4c52f27f2be, type: 3}
+      propertyPath: ui
+      value: 
+      objectReference: {fileID: 699451770}
     - target: {fileID: 7003494205748829829, guid: ce408854ac4971c42861d4c52f27f2be, type: 3}
       propertyPath: m_Name
       value: Item (1)
@@ -12238,6 +12250,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 3707583934934289076, guid: ce408854ac4971c42861d4c52f27f2be, type: 3}
+      propertyPath: ui
+      value: 
+      objectReference: {fileID: 699451770}
     - target: {fileID: 7003494205748829829, guid: ce408854ac4971c42861d4c52f27f2be, type: 3}
       propertyPath: m_Name
       value: Item
