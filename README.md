@@ -1,3 +1,2 @@
-TOP DOWN RPG - [PROPER NAME PENDING]
-- Following along with a youtube tutorial for a base to learn how to make games in unity and develop my first 2D game!
-- Hopefully i can conform this base into an RPG that has something or other to do with my IT coursework, wish me luck 🙏
+KNIGHT OF NUMBERS:
+Knight of Numbers is a top-down 2D RPG where you play as Sir Adds-a-lot, a lone wolf defending the local area from The Algebra Assassins. Build up your character and maths skills to help defend the people in the village.
