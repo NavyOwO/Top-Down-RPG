@@ -12,9 +12,9 @@ public class MapTransition : MonoBehaviour {
     CinemachineConfiner2D confiner;
     [SerializeField] float moveAmount = 2f;
     [SerializeField] Direction direction;
-    [SerializeField] bool ignoreCollisions = false;
-    [SerializeField] float ignoreTimer = 0.5f;
-    [SerializeField] TilemapCollider2D tilemapColLayer;
+    //[SerializeField] bool ignoreCollisions = false;
+    //[SerializeField] float ignoreTimer = 0.5f;
+    //[SerializeField] TilemapCollider2D tilemapColLayer;
 
     enum Direction { Up, Down, Left, Right }
     private void Awake() {
@@ -47,10 +47,13 @@ public class MapTransition : MonoBehaviour {
         }
         player.transform.position = newPos;
 
+        /*
         BoxCollider2D playerCollider = player.GetComponent<BoxCollider2D>();
 
         StartCoroutine(IgnorePlayerCollisionTime(playerCollider, tilemapColLayer));
+        */
     }
+    /*
     private IEnumerator IgnorePlayerCollisionTime(BoxCollider2D playerCollider, TilemapCollider2D tileCollider) {
         if (ignoreCollisions) {
             Debug.Log("ignoring collisions");
@@ -63,4 +66,5 @@ public class MapTransition : MonoBehaviour {
             Physics2D.IgnoreCollision(playerCollider, tileCollider, false);
         }
     }
+    */
 }
