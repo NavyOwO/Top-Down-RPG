@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Threading;
 using Unity.Cinemachine;
@@ -12,9 +13,9 @@ public class MapTransition : MonoBehaviour {
     CinemachineConfiner2D confiner;
     [SerializeField] float moveAmount = 2f;
     [SerializeField] Direction direction;
-    //[SerializeField] bool ignoreCollisions = false;
-    //[SerializeField] float ignoreTimer = 0.5f;
-    //[SerializeField] TilemapCollider2D tilemapColLayer;
+    [SerializeField] Rigidbody2D playerRigidbody;
+    [SerializeField] float waitTime = 1f;
+    [SerializeField] bool ignoreCollisions = false;
 
     enum Direction { Up, Down, Left, Right }
     private void Awake() {
@@ -30,6 +31,10 @@ public class MapTransition : MonoBehaviour {
     }
     private void UpdatePlayerPosition(GameObject player) {
         Vector3 newPos = player.transform.position;
+        if (ignoreCollisions) {
+            Physics2D.IgnoreLayerCollision(LayerMask.GetMask("Player"),
+                LayerMask.GetMask("Collision"), true);
+        }
 
         switch (direction) {
             case Direction.Up:
@@ -46,25 +51,11 @@ public class MapTransition : MonoBehaviour {
                 break;
         }
         player.transform.position = newPos;
-
-        /*
-        BoxCollider2D playerCollider = player.GetComponent<BoxCollider2D>();
-
-        StartCoroutine(IgnorePlayerCollisionTime(playerCollider, tilemapColLayer));
-        */
+        if (ignoreCollisions) StartCoroutine(ReenableCollisions());
     }
-    /*
-    private IEnumerator IgnorePlayerCollisionTime(BoxCollider2D playerCollider, TilemapCollider2D tileCollider) {
-        if (ignoreCollisions) {
-            Debug.Log("ignoring collisions");
-            Physics2D.IgnoreCollision(playerCollider, tileCollider, true);
-
-            Debug.Log("waiting for " + ignoreTimer + " second(s)");
-            yield return new WaitForSeconds(ignoreTimer);
-
-            Debug.Log("enabling collisions");
-            Physics2D.IgnoreCollision(playerCollider, tileCollider, false);
-        }
+    IEnumerator ReenableCollisions() {
+        yield return new WaitForSeconds(waitTime);
+        Physics2D.IgnoreLayerCollision(LayerMask.GetMask("Player"),
+            LayerMask.GetMask("Collision"), false);
     }
-    */
 }
