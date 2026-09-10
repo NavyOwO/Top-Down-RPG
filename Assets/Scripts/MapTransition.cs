@@ -14,7 +14,7 @@ public class MapTransition : MonoBehaviour {
     [SerializeField] float moveAmount = 2f;
     [SerializeField] Direction direction;
     [SerializeField] Rigidbody2D playerRigidbody;
-    [SerializeField] float waitTime = 1f;
+    [SerializeField] float waitTime = 2f;
     [SerializeField] bool ignoreCollisions = false;
 
     enum Direction { Up, Down, Left, Right }
