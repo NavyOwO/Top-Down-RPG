@@ -1,9 +1,8 @@
 using UnityEngine;
 
-[CreateAssetMenu(fileName ="NewNPCDialogue", menuName ="NPC Dialogue")]
+[CreateAssetMenu(fileName = "NewNPCDialogue", menuName = "NPC Dialogue")]
 
-public class NPCDialogue : ScriptableObject
-{
+public class NPCDialogue : ScriptableObject {
     [SerializeField] public string npcName;
     [SerializeField] public Sprite npcPortrait;
     [SerializeField] public string[] dialogueLines;

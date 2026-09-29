@@ -6,27 +6,22 @@ using Unity.Cinemachine;
 using UnityEditor.Overlays;
 using UnityEngine;
 
-public class SaveController : MonoBehaviour
-{
+public class SaveController : MonoBehaviour {
     private string saveLocation;
     private InventoryController inventoryController;
     private Chest[] chests;
-    void Start()
-    {
+    void Start() {
         InitializeComponents();
         LoadGame();
     }
-    private void InitializeComponents()
-    {
+    private void InitializeComponents() {
         saveLocation = Path.Combine(Application.persistentDataPath, "saveData.json");
         inventoryController = FindAnyObjectByType<InventoryController>();
         chests = FindObjectsByType<Chest>();
     }
 
-    public void SaveGame()
-    {
-        SaveData savedata = new SaveData
-        {
+    public void SaveGame() {
+        SaveData savedata = new SaveData {
             playerPosition = GameObject.FindGameObjectWithTag("Player").transform.position,
             mapBoundary = FindAnyObjectByType<CinemachineConfiner2D>().BoundingShape2D.gameObject.name,
             inventorySaveData = inventoryController.GetInventoryItems(),
@@ -35,14 +30,11 @@ public class SaveController : MonoBehaviour
 
         File.WriteAllText(saveLocation, JsonUtility.ToJson(savedata));
     }
-    private List<ChestSaveData> GetChestState()
-    {
+    private List<ChestSaveData> GetChestState() {
         List<ChestSaveData> chestStates = new List<ChestSaveData>();
 
-        foreach (Chest chest in chests)
-        {
-            ChestSaveData chestSaveData = new ChestSaveData
-            {
+        foreach (Chest chest in chests) {
+            ChestSaveData chestSaveData = new ChestSaveData {
                 chestID = chest.ChestID,
                 isOpened = chest.IsOpened
             };
@@ -51,10 +43,8 @@ public class SaveController : MonoBehaviour
 
         return chestStates;
     }
-    public void LoadGame()
-    {
-        if (File.Exists(saveLocation))
-        {
+    public void LoadGame() {
+        if (File.Exists(saveLocation)) {
             SaveData savedata = JsonUtility.FromJson<SaveData>(File.ReadAllText(saveLocation));
 
             GameObject.FindGameObjectWithTag("Player").transform.position = savedata.playerPosition;
@@ -67,21 +57,17 @@ public class SaveController : MonoBehaviour
 
             LoadChestStates(savedata.chestSaveData);
         }
-        else
-        {
+        else {
             SaveGame();
 
             inventoryController.SetInventoryItems(new List<InventorySaveData>());
         }
     }
-    private void LoadChestStates(List<ChestSaveData> chestStates)
-    {
-        foreach (Chest chest in chests)
-        {
+    private void LoadChestStates(List<ChestSaveData> chestStates) {
+        foreach (Chest chest in chests) {
             ChestSaveData chestSaveData = chestStates.FirstOrDefault(c => c.chestID == chest.ChestID);
 
-            if (chestSaveData != null)
-            {
+            if (chestSaveData != null) {
                 chest.SetOpened(chestSaveData.isOpened);
             }
         }
