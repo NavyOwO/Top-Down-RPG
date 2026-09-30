@@ -57,6 +57,6 @@ public class PlayerMovement : MonoBehaviour
         CancelInvoke(nameof(PlayFootstep));
     }
     void PlayFootstep() {
-        SoundEffectManager.Play("Footstep");
+        SoundEffectManager.Play("Footstep", true);
     }
 }

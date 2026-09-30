@@ -17,7 +17,7 @@ MonoBehaviour:
   dialogueLines:
   - Hey! I'm the frog behind the tutorial for most of the designing work here
   - please let me leave.... I'm trapped in here
-  autoProgressLines: 0100
+  autoProgressLines: 0101
   autoProgressDelay: 2
   typingSpeed: 0.05
   voiceSound: {fileID: 8300000, guid: 132e00ede82104b47bad90f679d6f029, type: 3}
