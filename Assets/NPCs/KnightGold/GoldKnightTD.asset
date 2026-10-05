@@ -15,10 +15,20 @@ MonoBehaviour:
   npcName: Gold Knight
   npcPortrait: {fileID: 21300000, guid: 5520e5313e992e24ebf0623f28d8ac59, type: 3}
   dialogueLines:
-  - Test dialogue 1/2 (auto progress) ....................................
-  - Test dialogue 2/2
+  - Test dialogue (auto progress) ....................................
+  - Test dialogue (question)
+  - Yes response 1/2 (auto prog)
+  - Yes response 2/2..
+  - No response 1/1
   autoProgressLines: 0100
+  endDialogueLines: 0000000101
   autoProgressDelay: 2
   typingSpeed: 0.05
   voiceSound: {fileID: 8300000, guid: a3273dc42376f3c45b77cbd506731d0a, type: 3}
   voicecPitch: 0.25
+  choices:
+  - dialogueIndex: 1
+    choices:
+    - Yes
+    - No
+    nextDialogueIndexes: 0200000003000000
