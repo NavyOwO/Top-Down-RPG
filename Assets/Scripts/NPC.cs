@@ -44,6 +44,12 @@ public class NPC : MonoBehaviour, IInteractable {
             StopAllCoroutines();
             dialogueUI.SetDialogueText(dialogueData.dialogueLines[dialogueIndex]);
             isTyping = false;
+            return;
+        }
+        StopAllCoroutines();
+
+        if (++dialogueIndex < dialogueData.dialogueLines.Length) {
+            DisplayCurrentLine();
         }
 
         dialogueUI.ClearChoices();
