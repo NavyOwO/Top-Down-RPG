@@ -47,7 +47,7 @@ public class NPC : MonoBehaviour, IInteractable {
             return;
         }
         StopAllCoroutines();
-
+        
         if (++dialogueIndex < dialogueData.dialogueLines.Length) {
             DisplayCurrentLine();
         }
