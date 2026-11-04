@@ -41,27 +41,34 @@ public class NPC : MonoBehaviour, IInteractable {
     }
     void NextLine() {
         if (isTyping) {
+            //Debug.Log("isTyping true");
             StopAllCoroutines();
             dialogueUI.SetDialogueText(dialogueData.dialogueLines[dialogueIndex]);
             isTyping = false;
             return;
         }
+        //Debug.Log("isTyping false");
         StopAllCoroutines();
-        
+        //Debug.Log("Coroutines Stopped");
+
         if (++dialogueIndex < dialogueData.dialogueLines.Length) {
             DisplayCurrentLine();
+            //Debug.Log("Displaying Line");
         }
 
         dialogueUI.ClearChoices();
+        Debug.Log("Cleared Choices");
 
         if (dialogueData.endDialogueLines.Length > dialogueIndex && dialogueData.endDialogueLines[dialogueIndex]) {
             EndDialogue();
-            return;
+            Debug.Log($"Ended dialogue now (at end index [index = {dialogueIndex}])");
+            return; 
         }
 
         foreach (DialogueChoice dialogueChoice in dialogueData.choices) {
             if (dialogueChoice.dialogueIndex == dialogueIndex) {
                 DisplayChoices(dialogueChoice);
+                Debug.Log("Displayed Choices");
                 return;
             }
         }
@@ -70,6 +77,7 @@ public class NPC : MonoBehaviour, IInteractable {
             DisplayCurrentLine();
         } else {
             EndDialogue();
+            Debug.Log("Ending dialogue (++index > length)");
         }
     }
 
@@ -98,17 +106,18 @@ public class NPC : MonoBehaviour, IInteractable {
     void ChooseOption(int nextIndex) {
         dialogueIndex = nextIndex;
         dialogueUI.ClearChoices();
-        DisplayCurrentLine();
+        DisplayCurrentLine(); //displays line after choice before enddialogue can get to it
     }
     void DisplayCurrentLine() {
         StopAllCoroutines();
         StartCoroutine(TypeLine());
     }
     public void EndDialogue() {
-        StopAllCoroutines();
+        StopAllCoroutines();     
         isDialogueActive = false;
         dialogueUI.SetDialogueText("");
         dialogueUI.ShowDialogueUI(false);
         PauseController.SetPause(false);
+        Debug.Log("Ended dialogue");
     }
 }

@@ -17,12 +17,10 @@ MonoBehaviour:
   dialogueLines:
   - Test dialogue (auto progress) ....................................
   - Test dialogue (question)
-  - Yes response 1/2 (ap)
-  - Yes 2/2 (end)
-  - No response 1/2 (ap)
-  - No 2/2 (end)
-  autoProgressLines: 010001000100
-  endDialogueLines: 000000010001
+  - Yes
+  - No
+  autoProgressLines: 01000101
+  endDialogueLines: 00000101
   autoProgressDelay: 2
   typingSpeed: 0.05
   voiceSound: {fileID: 8300000, guid: a3273dc42376f3c45b77cbd506731d0a, type: 3}
