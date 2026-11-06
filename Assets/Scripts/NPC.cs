@@ -1,5 +1,6 @@
 using System.Collections;
 using TMPro;
+using Unity.Multiplayer.Center.Common;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UI;
@@ -8,7 +9,7 @@ public class NPC : MonoBehaviour, IInteractable {
     public NPCDialogue dialogueData;
     private DialogueController dialogueUI;
     private int dialogueIndex;
-    private bool isTyping, isDialogueActive;
+    private bool isTyping, isDialogueActive, awaitingChoice;
 
     private void Start() {
         dialogueUI = DialogueController.Instance;
@@ -30,6 +31,7 @@ public class NPC : MonoBehaviour, IInteractable {
 
     void StartDialogue() {
         isDialogueActive = true;
+        awaitingChoice = false;
         dialogueIndex = 0;
 
         dialogueUI.SetNPCInfo(dialogueData.npcName, dialogueData.npcPortrait);
@@ -40,80 +42,85 @@ public class NPC : MonoBehaviour, IInteractable {
         DisplayCurrentLine();
     }
     void NextLine() {
+        if (awaitingChoice) return;
+
         if (isTyping) {
-            //Debug.Log("isTyping true");
             StopAllCoroutines();
             dialogueUI.SetDialogueText(dialogueData.dialogueLines[dialogueIndex]);
             isTyping = false;
+            TryShowChoices();
             return;
-        }
-        //Debug.Log("isTyping false");
-        StopAllCoroutines();
-        //Debug.Log("Coroutines Stopped");
-
-        if (++dialogueIndex < dialogueData.dialogueLines.Length) {
-            DisplayCurrentLine();
-            //Debug.Log("Displaying Line");
         }
 
         dialogueUI.ClearChoices();
-        Debug.Log("Cleared Choices");
-
-        if (dialogueData.endDialogueLines.Length > dialogueIndex && dialogueData.endDialogueLines[dialogueIndex]) {
+        if (IsFlagged(dialogueData.endDialogueLines, dialogueIndex)) {
             EndDialogue();
-            Debug.Log($"Ended dialogue now (at end index [index = {dialogueIndex}])");
             return; 
-        }
-
-        foreach (DialogueChoice dialogueChoice in dialogueData.choices) {
-            if (dialogueChoice.dialogueIndex == dialogueIndex) {
-                DisplayChoices(dialogueChoice);
-                Debug.Log("Displayed Choices");
-                return;
-            }
         }
 
         if (++dialogueIndex < dialogueData.dialogueLines.Length) {
             DisplayCurrentLine();
         } else {
             EndDialogue();
-            Debug.Log("Ending dialogue (++index > length)");
         }
     }
+    bool TryShowChoices() {
+        foreach (DialogueChoice c in dialogueData.choices) {
+            if (c.dialogueIndex == dialogueIndex) {
+                awaitingChoice = true;
+                DisplayChoices(c);
+                return true;
+            }
+        }
+        return false;
+    }
+
+    static bool IsFlagged(bool[] flags, int i) =>
+        flags != null && i < flags.Length && flags[i];
 
     IEnumerator TypeLine() {
         isTyping = true;
         dialogueUI.SetDialogueText("");
 
+        var sb = new System.Text.StringBuilder();
         foreach (char letter in dialogueData.dialogueLines[dialogueIndex]) {
-            dialogueUI.SetDialogueText(dialogueUI.dialogueText.text += letter);
+            sb.Append(letter);
+            dialogueUI.SetDialogueText(sb.ToString());
             SoundEffectManager.PlayVoice(dialogueData.voiceSound, dialogueData.voicecPitch);
             yield return new WaitForSeconds(dialogueData.typingSpeed);
         }
         isTyping = false;
+
+        if (TryShowChoices()) yield break;
 
         if (dialogueData.autoProgressLines.Length > dialogueIndex && dialogueData.autoProgressLines[dialogueIndex]) {
             yield return new WaitForSeconds(dialogueData.autoProgressDelay);
             NextLine();
         }
     }
+
     void DisplayChoices(DialogueChoice choice) {
         for (int i = 0; i < choice.choices.Length; i++) {
             int nextIndex = choice.nextDialogueIndexes[i];
             dialogueUI.CreateChoiceButton(choice.choices[i], () => ChooseOption(nextIndex));
         }
     }
+
     void ChooseOption(int nextIndex) {
         dialogueIndex = nextIndex;
         dialogueUI.ClearChoices();
-        DisplayCurrentLine(); //displays line after choice before enddialogue can get to it
+        awaitingChoice = false;
+        DisplayCurrentLine();
     }
+
     void DisplayCurrentLine() {
         StopAllCoroutines();
         StartCoroutine(TypeLine());
     }
+
     public void EndDialogue() {
-        StopAllCoroutines();     
+        StopAllCoroutines();
+        awaitingChoice = false;
         isDialogueActive = false;
         dialogueUI.SetDialogueText("");
         dialogueUI.ShowDialogueUI(false);
