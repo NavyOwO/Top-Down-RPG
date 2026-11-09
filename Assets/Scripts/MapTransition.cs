@@ -21,11 +21,17 @@ public class MapTransition : MonoBehaviour {
     }
     private void OnTriggerEnter2D(Collider2D collision) {
         if (collision.gameObject.CompareTag("Player")) {
-            confiner.BoundingShape2D = mapBoundry;
-            UpdatePlayerPosition(collision.gameObject);
-
+            FadeTransition(collision.gameObject);
             MapController_man.Instance?.HighlightArea(mapBoundry.name);
         }
+    }
+    async void FadeTransition(GameObject player) {
+        PauseController.SetPause(true);
+        await ScreenFader.Instance.FadeOut();
+        confiner.BoundingShape2D = mapBoundry;
+        UpdatePlayerPosition(player);
+        await ScreenFader.Instance.FadeIn();
+        PauseController.SetPause(false);
     }
     private void UpdatePlayerPosition(GameObject player) {
         if (direction == Direction.Teleport) {

@@ -73,6 +73,7 @@
     <Compile Include="Assets\Scripts\MapController_man.cs" />
     <Compile Include="Assets\Scripts\ItemDictionary.cs" />
     <Compile Include="Assets\Scripts\InteractionDetector.cs" />
+    <Compile Include="Assets\Scripts\ScreenFader.cs" />
     <Compile Include="Assets\Scripts\ItemPickupUIController.cs" />
     <Compile Include="Assets\Scripts\Chest.cs" />
     <Compile Include="Assets\IInteractable.cs" />
