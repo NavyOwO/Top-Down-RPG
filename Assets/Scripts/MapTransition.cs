@@ -13,11 +13,9 @@ public class MapTransition : MonoBehaviour {
     CinemachineConfiner2D confiner;
     [SerializeField] float moveAmount = 2f;
     [SerializeField] Direction direction;
-    [SerializeField] Rigidbody2D playerRigidbody;
-    [SerializeField] float waitTime = 2f;
-    [SerializeField] bool ignoreCollisions = false;
+    [SerializeField] Transform teleportTargetPosition;
 
-    enum Direction { Up, Down, Left, Right }
+    enum Direction { Up, Down, Left, Right, Teleport }
     private void Awake() {
         confiner = FindAnyObjectByType<CinemachineConfiner2D>();
     }
@@ -30,11 +28,12 @@ public class MapTransition : MonoBehaviour {
         }
     }
     private void UpdatePlayerPosition(GameObject player) {
-        Vector3 newPos = player.transform.position;
-        if (ignoreCollisions) {
-            Physics2D.IgnoreLayerCollision(LayerMask.GetMask("Player"),
-                LayerMask.GetMask("Collision"), true);
+        if (direction == Direction.Teleport) {
+            player.transform.position = teleportTargetPosition.position;
+            return;
         }
+
+        Vector3 newPos = player.transform.position;
 
         switch (direction) {
             case Direction.Up:
@@ -51,11 +50,5 @@ public class MapTransition : MonoBehaviour {
                 break;
         }
         player.transform.position = newPos;
-        if (ignoreCollisions) StartCoroutine(ReenableCollisions());
-    }
-    IEnumerator ReenableCollisions() {
-        yield return new WaitForSeconds(waitTime);
-        Physics2D.IgnoreLayerCollision(LayerMask.GetMask("Player"),
-            LayerMask.GetMask("Collision"), false);
     }
 }
