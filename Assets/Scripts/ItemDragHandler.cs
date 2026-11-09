@@ -52,35 +52,31 @@ public class ItemDragHandler : MonoBehaviour, IBeginDragHandler, IDragHandler, I
                     targetItem.AddToStack(draggedItem.quantity);
                     originalSlot.currentItem = null;
                     Destroy(gameObject);
-                }
-                else {
-                    // swap items if not working
-                }
+                } else {
+                    GameObject swappedItem = dropSlot.currentItem;
+                    swappedItem.transform.SetParent(originalSlot.transform);
+                    swappedItem.GetComponent<RectTransform>().anchoredPosition = Vector2.zero;
+                    originalSlot.currentItem = swappedItem;
 
-                // cache the item being swapped back before modifying any slot state
-                GameObject swappedItem = dropSlot.currentItem;
-                swappedItem.transform.SetParent(originalSlot.transform);
-                swappedItem.GetComponent<RectTransform>().anchoredPosition = Vector2.zero;
-                originalSlot.currentItem = swappedItem;
-            }
-            else {
-                // clear the original slot when dropping into an empty slot
+                    transform.SetParent(dropSlot.transform);
+                    dropSlot.currentItem = gameObject;
+                    GetComponent<RectTransform>().anchoredPosition = Vector2.zero;
+                }            
+            } else {
                 originalSlot.currentItem = null;
+                transform.SetParent(dropSlot.transform);
+                dropSlot.currentItem = gameObject;
+                GetComponent<RectTransform>().anchoredPosition = Vector2.zero;
             }
-
-            transform.SetParent(dropSlot.transform);
-            dropSlot.currentItem = gameObject;
-        }
-        else {
+        } else {
             if (!IsWithinInventory(eventData.position)) {
                 DropItem(originalSlot);
             }
             else {
                 transform.SetParent(originalParent);
+                GetComponent<RectTransform>().anchoredPosition = Vector2.zero;
             }
         }
-
-        GetComponent<RectTransform>().anchoredPosition = Vector2.zero;
     }
 
     bool IsWithinInventory(Vector2 mousePosition) {
@@ -105,10 +101,12 @@ public class ItemDragHandler : MonoBehaviour, IBeginDragHandler, IDragHandler, I
         Transform playerTransform = GameObject.FindGameObjectWithTag("Player")?.transform;
         if (playerTransform == null) {
             Debug.Log("Missing 'Player' tag ");
+            transform.SetParent(originalParent);
+            GetComponent<RectTransform>().anchoredPosition = Vector2.zero;
             return;
         }
 
-        HideForDuration(menuDelay, menuHiddenTime); //fix this
+        StartCoroutine(HideForDuration(menuDelay, menuHiddenTime));
 
         Vector2 dropOffset = Random.insideUnitCircle.normalized * Random.Range(minDropDistance, maxDropDistance);
         Vector2 dropPosition = (Vector2)playerTransform.position + dropOffset;
@@ -125,13 +123,15 @@ public class ItemDragHandler : MonoBehaviour, IBeginDragHandler, IDragHandler, I
 
     private IEnumerator HideForDuration(float delayBefore, float hideDuration) {
         GameObject ui = GameObject.Find("UI");
+        if (ui == null) yield break;
         CanvasGroup canvasGroup = ui.GetComponent<CanvasGroup>();
+        if (canvasGroup == null) yield break;
 
         yield return new WaitForSeconds(delayBefore);
-        canvasGroup.alpha = 1f;
+        canvasGroup.alpha = 0.1f;
 
         yield return new WaitForSeconds(hideDuration);
-        canvasGroup.alpha = 0.2f;
+        canvasGroup.alpha = 1f;
     }
     private void HideItemForDuration(float delayBefore, float hideDuration) {
         StartCoroutine(HideForDuration(delayBefore, hideDuration));
@@ -157,7 +157,7 @@ public class ItemDragHandler : MonoBehaviour, IBeginDragHandler, IDragHandler, I
 
         foreach (Transform slotTransform in inventoryController.inventoryPanel.transform) {
             Slot slot = slotTransform.GetComponent<Slot>();
-            if (slot != null && slot.currentItem != null) {
+            if (slot != null && slot.currentItem == null) {
                 slot.currentItem = newItem;
                 newItem.transform.SetParent(slot.transform);
                 newItem.GetComponent<RectTransform>().anchoredPosition = Vector2.zero;
