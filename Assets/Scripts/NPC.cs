@@ -52,15 +52,21 @@ public class NPC : MonoBehaviour, IInteractable {
             NextLine();
         }
         else {
-            StartDialogue();
+            StartDialogue(0);
         }
     }
 
-    void StartDialogue() {
+    // Start (or restart) the conversation at a specific line, e.g. post-battle dialogue.
+    public void StartDialogueAt(int lineIndex) {
+        if (dialogueData == null) return;
+        StartDialogue(lineIndex);
+    }
+
+    void StartDialogue(int startIndex) {
         isDialogueActive = true;
         awaitingChoice = false;
         isHeld = false;
-        dialogueIndex = 0;
+        dialogueIndex = startIndex;
 
         dialogueUI.SetNPCInfo(dialogueData.npcName, dialogueData.npcPortrait);
 
@@ -118,8 +124,7 @@ public class NPC : MonoBehaviour, IInteractable {
             sb.Append(letter);
             dialogueUI.SetDialogueText(sb.ToString());
             SoundEffectManager.PlayVoice(dialogueData.voiceSound, dialogueData.voicecPitch);
-            // FIX: realtime, because the game is paused (timeScale 0) during dialogue
-            yield return new WaitForSecondsRealtime(dialogueData.typingSpeed);
+            yield return new WaitForSecondsRealtime(dialogueData.typingSpeed); //realtime is unaffected by pause
         }
         isTyping = false;
 
@@ -165,7 +170,6 @@ public class NPC : MonoBehaviour, IInteractable {
 
     void DisplayCurrentLine() {
         StopAllCoroutines();
-        // FIX: a choice can point past the last line
         if (dialogueIndex < 0 || dialogueIndex >= dialogueData.dialogueLines.Length) {
             EndDialogue();
             return;
@@ -182,7 +186,7 @@ public class NPC : MonoBehaviour, IInteractable {
         dialogueUI.ClearChoices();
         dialogueUI.SetDialogueText("");
         dialogueUI.ShowDialogueUI(false);
-        // FIX: don't unpause underneath a battle that just started
+
         if (!BattleManager.IsBattleActive) PauseController.SetPause(false);
     }
 }

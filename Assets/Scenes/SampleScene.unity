@@ -25085,7 +25085,7 @@ GameObject:
   - component: {fileID: 546170813}
   - component: {fileID: 546170814}
   m_Layer: 0
-  m_Name: BattleController
+  m_Name: BattleManager
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -25127,7 +25127,7 @@ MonoBehaviour:
   player:
     name: Sir Addsalot
     maxHP: 40
-    attack: 8
+    attack: 1
     hp: 0
   defaultEnemy:
     name: Enemy
@@ -25136,10 +25136,34 @@ MonoBehaviour:
     hp: 0
   onWin:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 974136948}
+        m_TargetAssemblyTypeName: DialogueTeleport, Assembly-CSharp
+        m_MethodName: ReturnAfterWin
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
   onLose:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 974136948}
+        m_TargetAssemblyTypeName: DialogueTeleport, Assembly-CSharp
+        m_MethodName: ReturnAfterLoss
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!1001 &546693846
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -25778,7 +25802,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &660906467
 Transform:
   m_ObjectHideFlags: 0
@@ -44219,6 +44243,8 @@ MonoBehaviour:
   npcTarget: {fileID: 1513461528}
   playerBattleSprite: {fileID: 6373048116405451881, guid: 1973e586dd71b684fb1ff98662bc9d7f, type: 3}
   npcBattleSprite: {fileID: -1213333425, guid: 4768078d397f47945a39b8b3fbb3dac2, type: 3}
+  winDialogueIndex: 4
+  loseDialogueIndex: 5
 --- !u!1 &1030543190
 GameObject:
   m_ObjectHideFlags: 0

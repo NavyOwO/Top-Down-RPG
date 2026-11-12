@@ -19,8 +19,10 @@ MonoBehaviour:
   - Fine.... if that's what we need to do.
   - Well, when you're ready.
   - Get out of my sight then, boy
+  - You win! yayyyy
+  - hah ur trash lmao
   autoProgressLines: 0100
-  endDialogueLines: 00000101
+  endDialogueLines: 000001010101
   autoProgressDelay: 2
   typingSpeed: 0.06
   voiceSound: {fileID: 8300000, guid: 4356abad634a4fd46a2f2452c3b7f7de, type: 3}
