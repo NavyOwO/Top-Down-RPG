@@ -4,21 +4,45 @@ using Unity.Multiplayer.Center.Common;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.Events;
 
 public class NPC : MonoBehaviour, IInteractable {
     public NPCDialogue dialogueData;
     private DialogueController dialogueUI;
     private int dialogueIndex;
-    private bool isTyping, isDialogueActive, awaitingChoice;
+    private bool isTyping, isDialogueActive, awaitingChoice, isHeld;
+
+    public void HoldDialogue() {
+        isHeld = true;
+        StopAllCoroutines();
+        isTyping = false;
+        isDialogueActive = false;
+    }
+    public void ResumeDialogue() {
+        isHeld = false;
+        //isDialogueActive = true;
+        if (isDialogueActive) {
+            dialogueUI.ClearChoices();
+            DisplayCurrentLine();
+        }
+    }
+
+    [System.Serializable]
+    public class ChoiceEvent {
+        public string id;
+        public UnityEvent onChosen;
+    };
+    public ChoiceEvent[] choiceEvents;
 
     private void Start() {
         dialogueUI = DialogueController.Instance;
     }
     public bool CanInteract() {
-        return !isDialogueActive;
+        return !isDialogueActive && !isHeld;
     }
 
     public void Interact() {
+        //if (isDialogueActive && (DialogueController.Instance == null || !DialogueController.Instance.IsDialogueUIActive())) EndDialogue();
         if (dialogueData == null || PauseController.IsGamePaused && !isDialogueActive) 
             return; 
 
@@ -32,6 +56,7 @@ public class NPC : MonoBehaviour, IInteractable {
     void StartDialogue() {
         isDialogueActive = true;
         awaitingChoice = false;
+        isHeld = false;
         dialogueIndex = 0;
 
         dialogueUI.SetNPCInfo(dialogueData.npcName, dialogueData.npcPortrait);
@@ -42,7 +67,7 @@ public class NPC : MonoBehaviour, IInteractable {
         DisplayCurrentLine();
     }
     void NextLine() {
-        if (awaitingChoice) return;
+        if (awaitingChoice || isHeld) return;
 
         if (isTyping) {
             StopAllCoroutines();
@@ -102,15 +127,30 @@ public class NPC : MonoBehaviour, IInteractable {
     void DisplayChoices(DialogueChoice choice) {
         for (int i = 0; i < choice.choices.Length; i++) {
             int nextIndex = choice.nextDialogueIndexes[i];
-            dialogueUI.CreateChoiceButton(choice.choices[i], () => ChooseOption(nextIndex));
+            string eventId = (choice.eventIds != null && i < choice.eventIds.Length)
+            ? choice.eventIds[i] : null;
+            dialogueUI.CreateChoiceButton(choice.choices[i], () => ChooseOption(nextIndex, eventId));
         }
     }
 
-    void ChooseOption(int nextIndex) {
+    void ChooseOption(int nextIndex, string eventId) {
         dialogueIndex = nextIndex;
         dialogueUI.ClearChoices();
         awaitingChoice = false;
+
+        TriggerChoiceEvent(eventId);
+        if (!isDialogueActive || isHeld) return;
         DisplayCurrentLine();
+    }
+    void TriggerChoiceEvent(string eventId) {
+        if (string.IsNullOrEmpty(eventId)) return;
+
+        foreach (var e in choiceEvents) {
+            if (e.id == eventId) {
+                e.onChosen?.Invoke();
+                return;
+            }
+        }
     }
 
     void DisplayCurrentLine() {
@@ -122,6 +162,7 @@ public class NPC : MonoBehaviour, IInteractable {
         StopAllCoroutines();
         awaitingChoice = false;
         isDialogueActive = false;
+        isHeld = false;
         dialogueUI.SetDialogueText("");
         dialogueUI.ShowDialogueUI(false);
         PauseController.SetPause(false);

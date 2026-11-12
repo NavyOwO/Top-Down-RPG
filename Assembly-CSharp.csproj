@@ -66,8 +66,10 @@
     <Compile Include="Assets\Scripts\PauseController.cs" />
     <Compile Include="Assets\Scripts\InventoryController.cs" />
     <Compile Include="Assets\Scripts\MapTransition.cs" />
+    <Compile Include="Assets\Scripts\BattleManager.cs" />
     <Compile Include="Assets\Scripts\MenuController.cs" />
     <Compile Include="Assets\Scripts\SaveController.cs" />
+    <Compile Include="Assets\Scripts\DialogueTeleport.cs" />
     <Compile Include="Assets\Scripts\PlayerMovement.cs" />
     <Compile Include="Assets\Scripts\WaypointMover.cs" />
     <Compile Include="Assets\Scripts\MapController_man.cs" />
