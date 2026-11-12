@@ -1,9 +1,7 @@
-using System;
 using Unity.Cinemachine;
 using UnityEngine;
 
-public class DialogueTeleport : MonoBehaviour
-{
+public class DialogueTeleport : MonoBehaviour {
     [SerializeField] NPC npc;
     [SerializeField] PolygonCollider2D mapBoundary;
     [SerializeField] Transform playerTarget;
@@ -12,35 +10,53 @@ public class DialogueTeleport : MonoBehaviour
     [Header("Sprites")]
     [SerializeField] Sprite playerBattleSprite;
     [SerializeField] Sprite npcBattleSprite;
-    Sprite npcOriginalSprite;
+    Sprite npcOriginalSprite, playerOriginalSprite;
+
+    bool running;
 
     public async void Run() {
-        npc.HoldDialogue();
+        if (running) return; // guard against double-trigger
+        running = true;
 
-        npcOriginalSprite = npc.GetComponentInChildren<SpriteRenderer>().sprite;
+        npc.HoldDialogue();
         DialogueController.Instance.ShowDialogueUI(false);
 
-        await ScreenFader.Instance.FadeOut();
-
-        var confiner = FindAnyObjectByType<CinemachineConfiner2D>();
-        if (confiner != null && mapBoundary != null)
-            confiner.BoundingShape2D = mapBoundary;
-
+        var npcRenderer = npc.GetComponentInChildren<SpriteRenderer>();
         var player = GameObject.FindGameObjectWithTag("Player");
-        if (player != null) {
-            player.transform.position = playerTarget.position;
-            SetSprite(player.GetComponentInChildren<SpriteRenderer>(), playerBattleSprite);
+        var playerRenderer = player != null ? player.GetComponentInChildren<SpriteRenderer>() : null;
+
+        if (npcOriginalSprite == null && npcRenderer != null) 
+            npcOriginalSprite = npcRenderer.sprite;
+        if (playerOriginalSprite == null && playerRenderer != null) 
+            playerOriginalSprite = playerRenderer.sprite;
+
+        try {
+            await ScreenFader.Instance.FadeOut();
+
+            var confiner = FindAnyObjectByType<CinemachineConfiner2D>();
+            if (confiner != null && mapBoundary != null) {
+                confiner.BoundingShape2D = mapBoundary;
+                confiner.InvalidateBoundingShapeCache();
+            }
+
+            if (player != null) {
+                player.transform.position = playerTarget.position;
+                SetSprite(playerRenderer, playerBattleSprite);
+            }
+
+            npc.transform.position = npcTarget.position;
+            SetSprite(npcRenderer, npcBattleSprite);
+
+            Physics2D.SyncTransforms();
+
+            if (mapBoundary != null)
+                MapController_man.Instance?.HighlightArea(mapBoundary.name);
+
+            await ScreenFader.Instance.FadeIn();
         }
-
-        npc.transform.position = npcTarget.position;
-        SetSprite(npc.GetComponentInChildren<SpriteRenderer>(), npcBattleSprite);
-
-        Physics2D.SyncTransforms();
-
-        if (mapBoundary != null)
-            MapController_man.Instance?.HighlightArea(mapBoundary.name);
-
-        await ScreenFader.Instance.FadeIn();
+        catch (System.Exception ex) {
+            Debug.LogException(ex);
+        }
 
         DialogueController.Instance.ShowDialogueUI(true);
         npc.ResumeDialogue();
@@ -49,7 +65,7 @@ public class DialogueTeleport : MonoBehaviour
         if (detector != null)
             detector.Register(npc);
 
-        Debug.Log($"NPC Target {npcTarget.position} | Actual {npc.transform.position}");
+        running = false;
     }
 
     private void SetSprite(SpriteRenderer sr, Sprite sprite) {
@@ -57,7 +73,12 @@ public class DialogueTeleport : MonoBehaviour
         sr.sprite = sprite;
         sr.flipX = false;
     }
+
     public void ResetSprite() {
         SetSprite(npc.GetComponentInChildren<SpriteRenderer>(), npcOriginalSprite);
+
+        var player = GameObject.FindGameObjectWithTag("Player");
+        if (player != null)
+            SetSprite(player.GetComponentInChildren<SpriteRenderer>(), playerOriginalSprite);
     }
 }

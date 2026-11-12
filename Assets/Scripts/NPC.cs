@@ -1,9 +1,5 @@
 using System.Collections;
-using TMPro;
-using Unity.Multiplayer.Center.Common;
-using Unity.VisualScripting;
 using UnityEngine;
-using UnityEngine.UI;
 using UnityEngine.Events;
 
 public class NPC : MonoBehaviour, IInteractable {
@@ -12,24 +8,11 @@ public class NPC : MonoBehaviour, IInteractable {
     private int dialogueIndex;
     private bool isTyping, isDialogueActive, awaitingChoice, isHeld;
 
-    public void HoldDialogue() {
-        isHeld = true;
-        StopAllCoroutines();
-        isTyping = false;
-        isDialogueActive = false;
-    }
-    public void ResumeDialogue() {
-        isHeld = false;
-        //isDialogueActive = true;
-        if (isDialogueActive) {
-            dialogueUI.ClearChoices();
-            DisplayCurrentLine();
-        }
-    }
-
     [System.Serializable]
     public class ChoiceEvent {
         public string id;
+        [Tooltip("Close the dialogue (and unpause) before running onChosen. Tick this for choices that start a battle.")]
+        public bool endDialogueFirst;
         public UnityEvent onChosen;
     };
     public ChoiceEvent[] choiceEvents;
@@ -37,18 +20,38 @@ public class NPC : MonoBehaviour, IInteractable {
     private void Start() {
         dialogueUI = DialogueController.Instance;
     }
+
+    // Suspend the dialogue (e.g. during a teleport) WITHOUT forgetting that it is active.
+    public void HoldDialogue() {
+        isHeld = true;
+        StopAllCoroutines();
+        isTyping = false;
+        // FIX: no longer sets isDialogueActive = false, otherwise ResumeDialogue did nothing
+        // and the conversation restarted from line 0 on the next interact.
+    }
+
+    public void ResumeDialogue() {
+        isHeld = false;
+        if (isDialogueActive) {
+            dialogueUI.ClearChoices();
+            DisplayCurrentLine();
+        }
+    }
+
+    // FIX: was `!isDialogueActive && !isHeld`, so while a conversation was running
+    // the detector saw CanInteract()==false and never called Interact() to advance it.
     public bool CanInteract() {
-        return !isDialogueActive && !isHeld;
+        return !isHeld;
     }
 
     public void Interact() {
-        //if (isDialogueActive && (DialogueController.Instance == null || !DialogueController.Instance.IsDialogueUIActive())) EndDialogue();
-        if (dialogueData == null || PauseController.IsGamePaused && !isDialogueActive) 
-            return; 
+        if (dialogueData == null || PauseController.IsGamePaused && !isDialogueActive)
+            return;
 
         if (isDialogueActive) {
             NextLine();
-        } else {
+        }
+        else {
             StartDialogue();
         }
     }
@@ -66,6 +69,7 @@ public class NPC : MonoBehaviour, IInteractable {
 
         DisplayCurrentLine();
     }
+
     void NextLine() {
         if (awaitingChoice || isHeld) return;
 
@@ -80,15 +84,17 @@ public class NPC : MonoBehaviour, IInteractable {
         dialogueUI.ClearChoices();
         if (IsFlagged(dialogueData.endDialogueLines, dialogueIndex)) {
             EndDialogue();
-            return; 
+            return;
         }
 
         if (++dialogueIndex < dialogueData.dialogueLines.Length) {
             DisplayCurrentLine();
-        } else {
+        }
+        else {
             EndDialogue();
         }
     }
+
     bool TryShowChoices() {
         foreach (DialogueChoice c in dialogueData.choices) {
             if (c.dialogueIndex == dialogueIndex) {
@@ -112,14 +118,16 @@ public class NPC : MonoBehaviour, IInteractable {
             sb.Append(letter);
             dialogueUI.SetDialogueText(sb.ToString());
             SoundEffectManager.PlayVoice(dialogueData.voiceSound, dialogueData.voicecPitch);
-            yield return new WaitForSeconds(dialogueData.typingSpeed);
+            // FIX: realtime, because the game is paused (timeScale 0) during dialogue
+            yield return new WaitForSecondsRealtime(dialogueData.typingSpeed);
         }
         isTyping = false;
 
         if (TryShowChoices()) yield break;
 
-        if (dialogueData.autoProgressLines.Length > dialogueIndex && dialogueData.autoProgressLines[dialogueIndex]) {
-            yield return new WaitForSeconds(dialogueData.autoProgressDelay);
+        var auto = dialogueData.autoProgressLines;
+        if (auto != null && auto.Length > dialogueIndex && auto[dialogueIndex]) {
+            yield return new WaitForSecondsRealtime(dialogueData.autoProgressDelay);
             NextLine();
         }
     }
@@ -128,7 +136,7 @@ public class NPC : MonoBehaviour, IInteractable {
         for (int i = 0; i < choice.choices.Length; i++) {
             int nextIndex = choice.nextDialogueIndexes[i];
             string eventId = (choice.eventIds != null && i < choice.eventIds.Length)
-            ? choice.eventIds[i] : null;
+                ? choice.eventIds[i] : null;
             dialogueUI.CreateChoiceButton(choice.choices[i], () => ChooseOption(nextIndex, eventId));
         }
     }
@@ -139,14 +147,16 @@ public class NPC : MonoBehaviour, IInteractable {
         awaitingChoice = false;
 
         TriggerChoiceEvent(eventId);
-        if (!isDialogueActive || isHeld) return;
+        if (!isDialogueActive || isHeld) return; // event ended or held the dialogue
         DisplayCurrentLine();
     }
+
     void TriggerChoiceEvent(string eventId) {
-        if (string.IsNullOrEmpty(eventId)) return;
+        if (string.IsNullOrEmpty(eventId) || choiceEvents == null) return;
 
         foreach (var e in choiceEvents) {
             if (e.id == eventId) {
+                if (e.endDialogueFirst) EndDialogue();
                 e.onChosen?.Invoke();
                 return;
             }
@@ -155,17 +165,24 @@ public class NPC : MonoBehaviour, IInteractable {
 
     void DisplayCurrentLine() {
         StopAllCoroutines();
+        // FIX: a choice can point past the last line
+        if (dialogueIndex < 0 || dialogueIndex >= dialogueData.dialogueLines.Length) {
+            EndDialogue();
+            return;
+        }
         StartCoroutine(TypeLine());
     }
 
     public void EndDialogue() {
         StopAllCoroutines();
         awaitingChoice = false;
+        isTyping = false;
         isDialogueActive = false;
         isHeld = false;
+        dialogueUI.ClearChoices();
         dialogueUI.SetDialogueText("");
         dialogueUI.ShowDialogueUI(false);
-        PauseController.SetPause(false);
-        Debug.Log("Ended dialogue");
+        // FIX: don't unpause underneath a battle that just started
+        if (!BattleManager.IsBattleActive) PauseController.SetPause(false);
     }
 }

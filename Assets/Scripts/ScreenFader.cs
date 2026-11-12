@@ -25,7 +25,7 @@ public class ScreenFader : MonoBehaviour {
     async Task Fade(float targetTransparency) {
         float start = canvasGroup.alpha, t = 0;
         while (t < fadeDuration) {
-            t += Time.deltaTime;
+            t += Time.unscaledDeltaTime; //weird time scaling from before with deltatime
             canvasGroup.alpha = Mathf.Lerp(start, targetTransparency, t / fadeDuration);
             await Task.Yield();
         }

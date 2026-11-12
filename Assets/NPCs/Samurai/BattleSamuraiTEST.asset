@@ -17,7 +17,7 @@ MonoBehaviour:
   dialogueLines:
   - Are you sure you want to challenge me?
   - Fine.... if that's what we need to do.
-  - It seems we may have a problem
+  - Well, when you're ready.
   - Get out of my sight then, boy
   autoProgressLines: 0100
   endDialogueLines: 00000101

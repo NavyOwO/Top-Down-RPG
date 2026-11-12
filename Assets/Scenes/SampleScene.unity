@@ -44036,6 +44036,7 @@ MonoBehaviour:
   dialogueData: {fileID: 11400000, guid: f21ead6d1a20b6340ac9a6ab6db74a6a, type: 2}
   choiceEvents:
   - id: start_fight
+    endDialogueFirst: 0
     onChosen:
       m_PersistentCalls:
         m_Calls:
@@ -44064,6 +44065,7 @@ MonoBehaviour:
             m_BoolArgument: 0
           m_CallState: 2
   - id: go_arena
+    endDialogueFirst: 0
     onChosen:
       m_PersistentCalls:
         m_Calls:

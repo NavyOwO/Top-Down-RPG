@@ -4,40 +4,42 @@ using UnityEngine.InputSystem;
 public class InteractionDetector : MonoBehaviour {
     private IInteractable interactableInRange = null;
     public GameObject interactionIcon;
+
     void Start() {
         interactionIcon.SetActive(false);
     }
+
     public void OnInteract(InputAction.CallbackContext context) {
-        Debug.Log($"OnInteract phase={context.phase} inRange={interactableInRange}");
-        if (context.performed || interactableInRange == null) return;
+        if (!context.performed) return;
+        if (BattleManager.IsBattleActive || interactableInRange == null) return;
 
         if (!interactableInRange.CanInteract()) {
             interactionIcon.SetActive(false);
-        } else {
-            interactableInRange.Interact();
+            return;
         }
+
+        interactableInRange.Interact();
+        interactionIcon.SetActive(false);
     }
+
     public void Register(IInteractable interactable) {
         interactableInRange = interactable;
+        interactionIcon.SetActive(false);
     }
-    private void OnTriggerEnter2D(Collider2D collision) {
-        if (collision.TryGetComponent(out IInteractable interactable) && interactable == interactableInRange && !BattleManager.IsBattleActive) {
-            if (!interactable.CanInteract()) return;
 
-            interactableInRange = interactable;
-            interactionIcon.SetActive(true);
-        }
-    }
-    private void OnTriggerStay2D(Collider2D collision) {
-        if (BattleManager.IsBattleActive) return;
+    void Refresh(Collider2D collision) {
+        if (BattleManager.IsBattleActive || PauseController.IsGamePaused) return;
+        if (!collision.TryGetComponent(out IInteractable interactable)) return;
+        if (interactableInRange != null && interactableInRange != interactable) return;
+        if (!interactable.CanInteract()) return;
 
-        if (interactableInRange == null &&
-            collision.TryGetComponent(out IInteractable interactable) &&
-            interactable.CanInteract()) {
-            interactableInRange = interactable;
-            interactionIcon.SetActive(true);
-        }
+        interactableInRange = interactable;
+        interactionIcon.SetActive(true);
     }
+
+    private void OnTriggerEnter2D(Collider2D collision) => Refresh(collision);
+    private void OnTriggerStay2D(Collider2D collision) => Refresh(collision);
+
     private void OnTriggerExit2D(Collider2D collision) {
         if (collision.TryGetComponent(out IInteractable interactable) && interactable == interactableInRange) {
             interactableInRange = null;
