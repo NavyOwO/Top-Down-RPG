@@ -20,14 +20,10 @@ public class NPC : MonoBehaviour, IInteractable {
     private void Start() {
         dialogueUI = DialogueController.Instance;
     }
-
-    // Suspend the dialogue (e.g. during a teleport) WITHOUT forgetting that it is active.
     public void HoldDialogue() {
         isHeld = true;
         StopAllCoroutines();
         isTyping = false;
-        // FIX: no longer sets isDialogueActive = false, otherwise ResumeDialogue did nothing
-        // and the conversation restarted from line 0 on the next interact.
     }
 
     public void ResumeDialogue() {
@@ -38,8 +34,6 @@ public class NPC : MonoBehaviour, IInteractable {
         }
     }
 
-    // FIX: was `!isDialogueActive && !isHeld`, so while a conversation was running
-    // the detector saw CanInteract()==false and never called Interact() to advance it.
     public bool CanInteract() {
         return !isHeld;
     }

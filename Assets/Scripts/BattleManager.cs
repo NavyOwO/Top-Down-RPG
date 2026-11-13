@@ -63,7 +63,7 @@ public class BattleManager : MonoBehaviour {
     void OnAttack() {
         if (State != BattleState.PlayerTurn) return;
         StartCoroutine(PlayerAction(() => {
-            int dmg = Random.Range(player.attack - 2, player.attack + 3);
+            int dmg = Random.Range(player.attack - 2, player.attack + 3); //
             enemy.hp = Mathf.Max(0, enemy.hp - dmg);
             Log($"You  hit  {enemy.name}  for  {dmg}!");
         }));
