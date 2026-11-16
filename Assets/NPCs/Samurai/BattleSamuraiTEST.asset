@@ -21,7 +21,7 @@ MonoBehaviour:
   - Get out of my sight then, boy
   - You win! yayyyy
   - hah ur trash lmao
-  autoProgressLines: 0100
+  autoProgressLines: 000100000000
   endDialogueLines: 000001010101
   autoProgressDelay: 2
   typingSpeed: 0.06

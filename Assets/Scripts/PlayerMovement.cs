@@ -18,6 +18,13 @@ public class PlayerMovement : MonoBehaviour
 
     void Update()
     {
+        if (BattleManager.IsBattleActive || PauseController.IsGamePaused) {
+            rb.linearVelocity = Vector2.zero;
+            animator.SetBool("isWalking", false);
+            StopFootsteps();
+            return;
+        }
+
         if (PauseController.IsGamePaused) {
             rb.linearVelocity = Vector2.zero;
             animator.SetBool("isWalking", false);
@@ -36,6 +43,11 @@ public class PlayerMovement : MonoBehaviour
 
     public void Move(InputAction.CallbackContext context)
     {
+        if (BattleManager.IsBattleActive || PauseController.IsGamePaused) {
+            moveInput = context.ReadValue<Vector2>();
+            return;
+        }
+
         if (context.canceled)
         {
             animator.SetBool("isWalking", false);
