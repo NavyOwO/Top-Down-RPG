@@ -1,4 +1,5 @@
 using System.Collections;
+using System.Data;
 using TMPro;
 using UnityEngine;
 using UnityEngine.Events;
@@ -162,7 +163,7 @@ public class BattleManager : MonoBehaviour {
         Log("Choose  your  move");
     }
 
-    // ---------- Math question ----------
+    // === Math question ===
 
     IEnumerator AskQuestion() {
         GenerateQuestion(out string text, out int answer);
@@ -201,24 +202,28 @@ public class BattleManager : MonoBehaviour {
 
     void GenerateQuestion(out string text, out int answer) {
         int max = 10 * difficulty;
-        switch (Random.Range(0, 3)) {
+        switch (Random.Range(0, 4)) {
             case 0: { // addition
                     int a = Random.Range(1, max + 1), b = Random.Range(1, max + 1);
                     text = $"{a} + {b} = ?"; answer = a + b; break;
                 }
-            case 1: { // subtraction (never negative)
+            case 1: { // subtraction
                     int a = Random.Range(1, max + 1), b = Random.Range(1, max + 1);
                     if (b > a) (a, b) = (b, a);
                     text = $"{a} - {b} = ?"; answer = a - b; break;
                 }
-            default: { // multiplication
+            case 2: { // multiplication
                     int a = Random.Range(2, 6 + difficulty), b = Random.Range(2, 6 + difficulty);
                     text = $"{a} × {b} = ?"; answer = a * b; break;
+                }
+            default: { // division
+                    int a = Random.Range(2, 8 + difficulty), b = Random.Range(2, 8 + difficulty);
+                    text = $"{a * b} / {b} = ?"; answer = a; break;
                 }
         }
     }
 
-    // ---------- End of battle ----------
+    // === End of battle ===
 
     void End(BattleState result) {
         State = result;

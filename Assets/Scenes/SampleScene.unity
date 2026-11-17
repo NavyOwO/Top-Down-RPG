@@ -25755,7 +25755,7 @@ MonoBehaviour:
   answerInput: {fileID: 335514060}
   timerSlider: {fileID: 1989991905}
   answerTimeLimit: 10
-  difficulty: 1
+  difficulty: 5
   slowestAttackMultiplier: 0.5
   fastestAttackMultiplier: 2
   slowestBlock: 0.2
@@ -26515,7 +26515,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &660906467
 Transform:
   m_ObjectHideFlags: 0
