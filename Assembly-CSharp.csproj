@@ -66,6 +66,7 @@
     <Compile Include="Assets\Scripts\PauseController.cs" />
     <Compile Include="Assets\Scripts\InventoryController.cs" />
     <Compile Include="Assets\Scripts\MapTransition.cs" />
+    <Compile Include="Assets\Scripts\TitleScript.cs" />
     <Compile Include="Assets\Scripts\BattleManager.cs" />
     <Compile Include="Assets\Scripts\MenuController.cs" />
     <Compile Include="Assets\Scripts\SaveController.cs" />
@@ -81,6 +82,7 @@
     <Compile Include="Assets\IInteractable.cs" />
     <Compile Include="Assets\Scripts\TabController.cs" />
     <Compile Include="Assets\Scripts\Slot.cs" />
+    <Compile Include="Assets\Scripts\FloatScript.cs" />
     <Compile Include="Assets\NPCDIalogue.cs" />
     <Compile Include="Assets\GlobalHelper.cs" />
     <Compile Include="Assets\Scripts\SoundEffectLibrary.cs" />
