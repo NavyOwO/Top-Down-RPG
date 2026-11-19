@@ -80,6 +80,35 @@ public class InventoryController : MonoBehaviour
         }
         return invData;
     }
+    public int CountItem(int itemID) {
+        int total = 0;
+        foreach (Transform slotTransform in inventoryPanel.transform) {
+            Slot slot = slotTransform.GetComponent<Slot>();
+            if (slot != null && slot.currentItem != null) {
+                Item item = slot.currentItem.GetComponent<Item>();
+                if (item != null && item.ID == itemID) total += item.quantity;
+            }
+        }
+        return total;
+    }
+
+    public bool RemoveItem(int itemID, int amount = 1) {
+        foreach (Transform slotTransform in inventoryPanel.transform) {
+            Slot slot = slotTransform.GetComponent<Slot>();
+            if (slot == null || slot.currentItem == null) continue;
+
+            Item item = slot.currentItem.GetComponent<Item>();
+            if (item == null || item.ID != itemID) continue;
+
+            item.RemoveFromStack(amount);
+            if (item.quantity <= 0) {
+                Destroy(slot.currentItem);
+                slot.currentItem = null;   // free the slot right away
+            }
+            return true;
+        }
+        return false;
+    }
 
     public void SetInventoryItems(List<InventorySaveData> inventorySaveData)
     {

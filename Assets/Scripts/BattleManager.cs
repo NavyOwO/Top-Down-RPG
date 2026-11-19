@@ -50,12 +50,22 @@ public class BattleManager : MonoBehaviour {
     public Combatant player = new Combatant { name = "Sir Addsalot", maxHP = 40, attack = 8 };
     public Combatant defaultEnemy = new Combatant { name = "Enemy" };
 
+    [Header("Healing")]
+    public GameObject healingPotionPrefab;
+    public int healAmount = 8;
+
     [Header("Events")]
     public UnityEvent onWin;
     public UnityEvent onLose;
 
     public BattleState State { get; private set; } = BattleState.Inactive;
     public static bool IsBattleActive => Instance != null && Instance.State != BattleState.Inactive;
+
+    int PotionID => healingPotionPrefab.GetComponent<Item>().ID;
+    bool HasPotion() =>
+        InventoryController.Instance != null &&
+        healingPotionPrefab != null &&
+        InventoryController.Instance.CountItem(PotionID) > 0;
 
     Combatant enemy;
 
@@ -99,6 +109,7 @@ public class BattleManager : MonoBehaviour {
 
     void OnHeal() {
         if (State != BattleState.PlayerTurn) return;
+        if (!HasPotion()) { Log("You  have  no  healing  potions!"); return; }
         StartCoroutine(PlayerHealRoutine());
     }
 
@@ -119,17 +130,16 @@ public class BattleManager : MonoBehaviour {
         }
         RefreshUI();
         yield return WaitForContinue();
-        Log("Enemy  attack  incoming!!  Prepare  to  defend...");
-        yield return WaitForContinue();
 
         yield return EnemyPhase();
     }
 
     IEnumerator PlayerHealRoutine() {
         SetButtons(false);
+        InventoryController.Instance.RemoveItem(PotionID);
         int amt = 8;
         player.hp = Mathf.Min(player.maxHP, player.hp + amt);
-        Log($"You  recover  {amt}  HP.");
+        Log($"You  use  a  potion  and  recover  {amt}  HP.");
         RefreshUI();
         yield return WaitForContinue();
 
@@ -140,6 +150,9 @@ public class BattleManager : MonoBehaviour {
 
     IEnumerator EnemyPhase() {
         if (enemy.IsDead) { End(BattleState.Won); yield break; }
+
+        Log("Enemy  attack  incoming!!  Prepare  to  defend...");
+        yield return WaitForContinue();
 
         State = BattleState.EnemyTurn;
         Log($"{enemy.name}  attacks!  Solve  it  fast  to  block!");
@@ -241,7 +254,7 @@ public class BattleManager : MonoBehaviour {
         else onLose?.Invoke();
     }
 
-    void SetButtons(bool on) { attackButton.interactable = on; healButton.interactable = on; }
+    void SetButtons(bool on) { attackButton.interactable = on; healButton.interactable = on && HasPotion(); }
     void Log(string msg) => logText.text = msg;
 
     void RefreshUI() {

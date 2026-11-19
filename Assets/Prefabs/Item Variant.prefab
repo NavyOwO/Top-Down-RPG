@@ -18,7 +18,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5151321459926673034, guid: ce408854ac4971c42861d4c52f27f2be, type: 3}
       propertyPath: Name
-      value: Heart
+      value: Healing
       objectReference: {fileID: 0}
     - target: {fileID: 6676897524368797619, guid: ce408854ac4971c42861d4c52f27f2be, type: 3}
       propertyPath: bounceCount
