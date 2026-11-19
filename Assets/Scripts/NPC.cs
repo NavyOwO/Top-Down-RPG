@@ -1,9 +1,14 @@
 using System.Collections;
+using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.Events;
 
 public class NPC : MonoBehaviour, IInteractable {
     public NPCDialogue dialogueData;
+
+    [Tooltip("After the dialogue finishes, remove NPC from map")]
+    public bool removeAfterDialogue;
+
     private DialogueController dialogueUI;
     private int dialogueIndex;
     private bool isTyping, isDialogueActive, awaitingChoice, isHeld;
@@ -155,12 +160,14 @@ public class NPC : MonoBehaviour, IInteractable {
 
         foreach (var e in choiceEvents) {
             if (e.id == eventId) {
-                if (e.endDialogueFirst) EndDialogue();
+                if (e.endDialogueFirst) FinishDialogue(allowRemoval: false);
                 e.onChosen?.Invoke();
                 return;
             }
         }
     }
+
+    public void EndDialogue() => FinishDialogue(allowRemoval: true);
 
     void DisplayCurrentLine() {
         StopAllCoroutines();
@@ -171,7 +178,7 @@ public class NPC : MonoBehaviour, IInteractable {
         StartCoroutine(TypeLine());
     }
 
-    public void EndDialogue() {
+    public void FinishDialogue(bool allowRemoval) {
         StopAllCoroutines();
         awaitingChoice = false;
         isTyping = false;
@@ -180,6 +187,21 @@ public class NPC : MonoBehaviour, IInteractable {
         dialogueUI.ClearChoices();
         dialogueUI.SetDialogueText("");
         dialogueUI.ShowDialogueUI(false);
+
+        if (allowRemoval && removeAfterDialogue & !BattleManager.IsBattleActive) {
+            _ = RemoveWithFade();
+            return;
+        }
+
+        if (!BattleManager.IsBattleActive) PauseController.SetPause(false);
+    }
+    async Task RemoveWithFade() {
+        var fader = ScreenFader.Instance;
+        if (fader != null) await fader.FadeOut();
+
+        gameObject.SetActive(false);
+
+        if (fader != null) await fader.FadeIn();
 
         if (!BattleManager.IsBattleActive) PauseController.SetPause(false);
     }

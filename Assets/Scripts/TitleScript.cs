@@ -1,3 +1,4 @@
+using System.Threading.Tasks;
 using Unity.VisualScripting;
 using UnityEngine;
 
@@ -30,12 +31,16 @@ public class TitleMenu : MonoBehaviour {
         PauseController.SetPause(true);
     }
 
-    public void PlayGame() {
+    public async void PlayGame() {
+        await ScreenFader.Instance.FadeOut();
+
         gameCam.enabled = true;
         gameCam.gameObject.SetActive(true);
 
         titleCam.enabled = false;
         titleCanvas.enabled = false;
+
+        await ScreenFader.Instance.FadeIn();
 
         PauseController.SetPause(false);
     }
