@@ -54,13 +54,11 @@ public class NPC : MonoBehaviour, IInteractable {
             StartDialogue(0);
         }
     }
-
-    // Start (or restart) the conversation at a specific line, e.g. post-battle dialogue.
     public void StartDialogueAt(int lineIndex) {
         if (dialogueData == null) return;
+        battlePending = false;
         StartDialogue(lineIndex);
     }
-
     void StartDialogue(int startIndex) {
         isDialogueActive = true;
         awaitingChoice = false;
@@ -154,13 +152,15 @@ public class NPC : MonoBehaviour, IInteractable {
         if (!isDialogueActive || isHeld) return; // event ended or held the dialogue
         DisplayCurrentLine();
     }
-
     void TriggerChoiceEvent(string eventId) {
         if (string.IsNullOrEmpty(eventId) || choiceEvents == null) return;
 
         foreach (var e in choiceEvents) {
             if (e.id == eventId) {
-                if (e.endDialogueFirst) FinishDialogue(allowRemoval: false);
+                if (e.endDialogueFirst) {
+                    battlePending = true;
+                    FinishDialogue(allowRemoval: false);
+                }
                 e.onChosen?.Invoke();
                 return;
             }
@@ -177,7 +177,7 @@ public class NPC : MonoBehaviour, IInteractable {
         }
         StartCoroutine(TypeLine());
     }
-
+    private bool battlePending;
     public void FinishDialogue(bool allowRemoval) {
         StopAllCoroutines();
         awaitingChoice = false;
@@ -188,7 +188,7 @@ public class NPC : MonoBehaviour, IInteractable {
         dialogueUI.SetDialogueText("");
         dialogueUI.ShowDialogueUI(false);
 
-        if (allowRemoval && removeAfterDialogue & !BattleManager.IsBattleActive) {
+        if (allowRemoval && !battlePending && removeAfterDialogue && !BattleManager.IsBattleActive) {
             _ = RemoveWithFade();
             return;
         }

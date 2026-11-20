@@ -103,7 +103,7 @@ public class InventoryController : MonoBehaviour
             item.RemoveFromStack(amount);
             if (item.quantity <= 0) {
                 Destroy(slot.currentItem);
-                slot.currentItem = null;   // free the slot right away
+                slot.currentItem = null;
             }
             return true;
         }
