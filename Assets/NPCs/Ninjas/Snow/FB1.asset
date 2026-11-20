@@ -1,0 +1,47 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 00ae80bd04968ce43b44a460da8d71e3, type: 3}
+  m_Name: FB1
+  m_EditorClassIdentifier: Assembly-CSharp::NPCDialogue
+  npcName: Snow Ninja
+  npcPortrait: {fileID: -7527145504033472756, guid: eaa3aeb0255aa884b8a553c5b5698423, type: 3}
+  dialogueLines:
+  - You wanna get through to the ol' village or something?
+  - You've gotta get through me first
+  - When you're ready...
+  - Sigh... I tried my hardest to defend the village, I'll get out of your way.
+  - You're gonna have to try again if you want to get past me.
+  autoProgressLines: 0100010000
+  endDialogueLines: 0000000101
+  autoProgressDelay: 2
+  typingSpeed: 0.06
+  voiceSound: {fileID: 8300000, guid: 132e00ede82104b47bad90f679d6f029, type: 3}
+  voicecPitch: 0.65
+  choices:
+  - dialogueIndex: 1
+    choices:
+    - Let's Go!
+    nextDialogueIndexes: 02000000
+    eventIds:
+    - go_arena
+  - dialogueIndex: 2
+    choices:
+    - '[Fight Him]'
+    nextDialogueIndexes: 03000000
+    eventIds:
+    - start_fight
+  - dialogueIndex: 4
+    choices:
+    - Go again
+    nextDialogueIndexes: 02000000
+    eventIds:
+    - go_arena

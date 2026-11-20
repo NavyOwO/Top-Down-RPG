@@ -2,7 +2,7 @@
 - Project name: TopDownRPG
 - Unity version: Unity 6000.4.6f1
 - Active game object:
-  - Name: NPC[1]
+  - Name: PlayerHP
   - Tag: Untagged
-  - Layer: Default
+  - Layer: UI
 <!-- UNITY CODE ASSIST INSTRUCTIONS END -->
