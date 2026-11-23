@@ -6,12 +6,17 @@ using UnityEngine.Events;
 public class NPC : MonoBehaviour, IInteractable {
     public NPCDialogue dialogueData;
 
+    private string npcID;
+    public string NPCID => npcID ??= $"{gameObject.scene.name}_{name}_{transform.position.x:0.##}_{transform.position.y:0.##}";
+
     [Tooltip("After the dialogue finishes, remove NPC from map")]
     public bool removeAfterDialogue;
 
     private DialogueController dialogueUI;
     private int dialogueIndex;
     private bool isTyping, isDialogueActive, awaitingChoice, isHeld;
+
+    public GameObject sideNPC;
 
     [System.Serializable]
     public class ChoiceEvent {
@@ -200,6 +205,7 @@ public class NPC : MonoBehaviour, IInteractable {
         if (fader != null) await fader.FadeOut();
 
         gameObject.SetActive(false);
+        sideNPC.gameObject.SetActive(true);
 
         if (fader != null) await fader.FadeIn();
 

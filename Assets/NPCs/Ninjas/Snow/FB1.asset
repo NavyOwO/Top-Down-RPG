@@ -15,11 +15,11 @@ MonoBehaviour:
   npcName: Snow Ninja
   npcPortrait: {fileID: -7527145504033472756, guid: eaa3aeb0255aa884b8a553c5b5698423, type: 3}
   dialogueLines:
-  - You wanna get through to the ol' village or something?
-  - You've gotta get through me first
-  - When you're ready...
-  - Sigh... I tried my hardest to defend the village, I'll get out of your way.
-  - You're gonna have to try again if you want to get past me.
+  - Heh. I didn't expect someone like you to get so far.
+  - I hope you're ready for the cold kid.
+  - Don't catch a cold out here...
+  - Well... You did good Adds-a-lot. Take this chest as a reward.
+  - Maybe you aren't ready for the cold after all....
   autoProgressLines: 0100010000
   endDialogueLines: 0000000101
   autoProgressDelay: 2
@@ -29,7 +29,7 @@ MonoBehaviour:
   choices:
   - dialogueIndex: 1
     choices:
-    - Let's Go!
+    - I'll show you...
     nextDialogueIndexes: 02000000
     eventIds:
     - go_arena

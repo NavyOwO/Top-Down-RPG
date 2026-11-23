@@ -5,7 +5,7 @@ using UnityEngine;
 public class ScreenFader : MonoBehaviour {
     public static ScreenFader Instance;
     [SerializeField] CanvasGroup canvasGroup;
-    [SerializeField] float fadeDuration = 0.5f;
+    [SerializeField] float fadeDuration = 0.8f;
     [SerializeField] CinemachineCamera vcam;
 
     CinemachinePositionComposer composer;

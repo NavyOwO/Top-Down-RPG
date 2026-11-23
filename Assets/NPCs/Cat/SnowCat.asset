@@ -15,10 +15,10 @@ MonoBehaviour:
   npcName: Stray Cat
   npcPortrait: {fileID: 21300000, guid: 047cc31f42824564f8ecebb844cce1a4, type: 3}
   dialogueLines:
-  - Meow :3
+  - Nyaa
   - Make sure to challenge every ninja you see about - they get your maths skills
     up and get you higher in your class!
-  - mmrrrrowww... mrrrp
+  - Good luck!
   autoProgressLines: 010000
   endDialogueLines: 000001
   autoProgressDelay: 1
