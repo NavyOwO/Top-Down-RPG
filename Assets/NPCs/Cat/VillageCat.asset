@@ -19,7 +19,7 @@ MonoBehaviour:
   - Lookout for the math ninjas up ahead - make sure your skills stay sharp so you
     can defeat them easily!
   - mmrrrrowww... mrrrp
-  autoProgressLines: 010100
+  autoProgressLines: 010000
   endDialogueLines: 000001
   autoProgressDelay: 1
   typingSpeed: 0.05
