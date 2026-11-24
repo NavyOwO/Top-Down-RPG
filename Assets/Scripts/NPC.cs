@@ -18,6 +18,11 @@ public class NPC : MonoBehaviour, IInteractable {
 
     public GameObject sideNPC;
 
+    [Header("Battle")]
+    public Combatant battleEnemy = new Combatant { name = "Enemy", maxHP = 30, attack = 6 };
+    [Range(1, 5)] public int battleDifficulty = 1;
+    public UnityEvent onBattleWon, onBattleLost;
+
     [System.Serializable]
     public class ChoiceEvent {
         public string id;
@@ -43,6 +48,8 @@ public class NPC : MonoBehaviour, IInteractable {
             DisplayCurrentLine();
         }
     }
+    public void StartBattle() =>
+    BattleManager.Instance.Begin(battleEnemy, battleDifficulty, onBattleWon, onBattleLost);
 
     public bool CanInteract() {
         return !isHeld;

@@ -38,6 +38,9 @@ public class BattleManager : MonoBehaviour {
     [Tooltip("Higher = bigger numbers. 1 = easy, 2 = medium, 3 = hard.")]
     [Range(1, 5)] public int difficulty = 1;
 
+    int currentDifficulty;
+    UnityEvent currentOnWin, currentOnLose;
+
     [Header("Attack Scaling (multiplier on base damage)")]
     public float slowestAttackMultiplier = 0.5f;
     public float fastestAttackMultiplier = 2f;
@@ -87,8 +90,13 @@ public class BattleManager : MonoBehaviour {
 
     public void StartBattle() => Begin(defaultEnemy);
 
-    public void Begin(Combatant e) {
+    public void Begin(Combatant e, int diff = 1, UnityEvent win = null, UnityEvent lose = null) {
         enemy = e;
+        if (enemy.hpSlider == null) enemy.hpSlider = defaultEnemy.hpSlider;
+        currentDifficulty = diff > 0 ? diff : difficulty;
+        currentOnWin = win;
+        currentOnLose = lose;
+
         enemy.hp = enemy.maxHP;
         player.hp = player.maxHP;
 
@@ -214,10 +222,11 @@ public class BattleManager : MonoBehaviour {
     }
 
     void GenerateQuestion(out string text, out int answer) {
-        int max = 10 * difficulty;
+        int max = 10 * currentDifficulty;
+        int min = 5 * currentDifficulty;
         switch (Random.Range(0, 4)) {
             case 0: { // addition
-                    int a = Random.Range(1, max + 1), b = Random.Range(1, max + 1);
+                    int a = Random.Range(1 + min, max + 1), b = Random.Range(1, max + 1);
                     text = $"{a} + {b} = ?"; answer = a + b; break;
                 }
             case 1: { // subtraction
@@ -226,11 +235,11 @@ public class BattleManager : MonoBehaviour {
                     text = $"{a} - {b} = ?"; answer = a - b; break;
                 }
             case 2: { // multiplication
-                    int a = Random.Range(2, 6 + difficulty), b = Random.Range(2, 6 + difficulty);
+                    int a = Random.Range(2, 6 + currentDifficulty), b = Random.Range(2, 6 + currentDifficulty);
                     text = $"{a} × {b} = ?"; answer = a * b; break;
                 }
             default: { // division
-                    int a = Random.Range(2, 8 + difficulty), b = Random.Range(2, 8 + difficulty);
+                    int a = Random.Range(2, 8 + currentDifficulty), b = Random.Range(2, 8 + currentDifficulty);
                     text = $"{a * b} / {b} = ?"; answer = a; break;
                 }
         }
@@ -249,6 +258,9 @@ public class BattleManager : MonoBehaviour {
         battlePanel.SetActive(false);
         PauseController.SetPause(false);
         State = BattleState.Inactive;
+
+        UnityEvent npcEvent = result == BattleState.Won ? currentOnWin : currentOnLose;
+        currentOnWin = currentOnLose = null;
 
         if (result == BattleState.Won) onWin?.Invoke();
         else onLose?.Invoke();
