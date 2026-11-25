@@ -128,7 +128,7 @@ public class BattleManager : MonoBehaviour {
 
         if (lastCorrect) {
             float mult = Mathf.Lerp(slowestAttackMultiplier, fastestAttackMultiplier, lastSpeed);
-            int baseDmg = Random.Range(player.attack - 2, player.attack + 3);
+            int baseDmg = Random.Range(player.attack - 1, player.attack + 2);
             int dmg = Mathf.Max(1, Mathf.RoundToInt(baseDmg * mult));
             enemy.hp = Mathf.Max(0, enemy.hp - dmg);
             Log($"Correct!  You  hit  {enemy.name}  for  {dmg}!  (x{mult:0.0})");
@@ -226,20 +226,24 @@ public class BattleManager : MonoBehaviour {
         int min = 5 * currentDifficulty;
         switch (Random.Range(0, 4)) {
             case 0: { // addition
-                    int a = Random.Range(1 + min, max + 1), b = Random.Range(1, max + 1);
+                    int a = Random.Range(1 + min, max + 1), 
+                        b = Random.Range(1, max + 1);
                     text = $"{a} + {b} = ?"; answer = a + b; break;
                 }
             case 1: { // subtraction
-                    int a = Random.Range(1, max + 1), b = Random.Range(1, max + 1);
+                    int a = Random.Range(1, max + 1), 
+                        b = Random.Range(1, max + 1);
                     if (b > a) (a, b) = (b, a);
                     text = $"{a} - {b} = ?"; answer = a - b; break;
                 }
             case 2: { // multiplication
-                    int a = Random.Range(2, 6 + currentDifficulty), b = Random.Range(2, 6 + currentDifficulty);
+                    int a = Random.Range(1 + currentDifficulty, 6 + currentDifficulty), 
+                        b = Random.Range(1 + currentDifficulty, 6 + currentDifficulty);
                     text = $"{a} × {b} = ?"; answer = a * b; break;
                 }
             default: { // division
-                    int a = Random.Range(2, 8 + currentDifficulty), b = Random.Range(2, 8 + currentDifficulty);
+                    int a = Random.Range(1 + currentDifficulty, 8 + currentDifficulty), 
+                        b = Random.Range(1 + currentDifficulty, 8 + currentDifficulty);
                     text = $"{a * b} / {b} = ?"; answer = a; break;
                 }
         }
